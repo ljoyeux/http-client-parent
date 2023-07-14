@@ -58,7 +58,7 @@ public enum MediaType {
      * @param value
      * La valeur (e.g. "text/plain"). La valeur peut être nulle
      * @return
-     * Le MediaType correspondant à la valeur. Retourne null si aucune valeur est trouvé.
+     * Le fr.devlogic.util.http.MediaType correspondant à la valeur. Retourne null si aucune valeur est trouvé.
      */
     @Nullable
     public static MediaType getMediaType(@Nullable String value) {

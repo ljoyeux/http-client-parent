@@ -19,8 +19,14 @@
     <dependencies>
         <dependency>
             <groupId>fr.devlogic.util.http</groupId>
+            <artifactId>http-client-api</artifactId>
+            <version>${http.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.devlogic.util.http</groupId>
             <artifactId>http-client</artifactId>
             <version>${http.client.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -3,7 +3,10 @@ package fr.devlogic.util.http;
 import fr.devlogic.util.http.exception.HttpRuntimeException;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 

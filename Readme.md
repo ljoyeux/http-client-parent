@@ -24,11 +24,11 @@ chained. A httpRequestTemplateConfiguration can be provided to RestTemplate to c
 Here is an example of instantiating RestTemplate:
 
 ```java
-HttpRequestTemplateFactory httpRequestTemplateFactory=new HttpRequestTemplateFactory();
+fr.devlogic.util.http.HttpRequestTemplateFactory httpRequestTemplateFactory=new fr.devlogic.util.http.HttpRequestTemplateFactory();
 
-        HttpRequestTemplate httpRequestTemplate=httpRequestTemplateFactory.getObject():
+        fr.devlogic.util.http.HttpRequestTemplate httpRequestTemplate=httpRequestTemplateFactory.getObject():
 
-        HttpRequestTemplateConfiguration httpRequestTemplateConfiguration=httpRequestTemplate.configuration().setTimeout(TIMEOUT); // create a httpRequestTemplateConfiguration for httpRequestTemplate instance and configure the httpRequestTemplateConfiguration
+        fr.devlogic.util.http.HttpRequestTemplateConfiguration httpRequestTemplateConfiguration=httpRequestTemplate.configuration().setTimeout(TIMEOUT); // create a httpRequestTemplateConfiguration for httpRequestTemplate instance and configure the httpRequestTemplateConfiguration
         if(proxy.getAddress()!=null&&proxy.getPort()!=null){
         log.info("Utilisation d'un proxy pour les requetes vers SPICE : {}, {}",proxy.getAddress(),proxy.getPort());
         httpRequestTemplateConfiguration.setProxy(proxy.getAddress(),proxy.getPort());
@@ -37,8 +37,8 @@ HttpRequestTemplateFactory httpRequestTemplateFactory=new HttpRequestTemplateFac
         jsonRequestTemplate=
         httpRequestTemplate
         .basicAuth(credentials.getUsername(),credentials.getPassword())
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+        .accept(fr.devlogic.util.http.MediaType.APPLICATION_JSON)
+        .contentType(fr.devlogic.util.http.MediaType.APPLICATION_JSON);
 ```
 
 Implemented requests are GET, POST, PUT and DELETE. There are two scenarios: with or without parameters.
@@ -63,10 +63,10 @@ Regarding the json type, the desired model is passed as a getContent parameter:
 String str = jsonRequestTemplate.get(uri).getContent(String.class);
 
 // explicit type
-Map<String, String> map = jsonRequestTemplate.get(uri).getContent(new GenericType<Map<String, String>>(){});
+Map<String, String> map = jsonRequestTemplate.get(uri).getContent(new fr.devlogic.util.http.GenericType<Map<String, String>>(){});
 
 // Implicit type (type inference)
-Map<String, String> map = jsonRequestTemplate.get(uri).getContent(new GenericType<>(){});
+Map<String, String> map = jsonRequestTemplate.get(uri).getContent(new fr.devlogic.util.http.GenericType<>(){});
 
 // Dynamically
 Map<String, String> map = jsonRequestTemplate.get(uri).getContent(TYPE_FACTORY.constructMapType(Map.class, String.class, String.class));
@@ -75,4 +75,6 @@ Map<String, String> map = jsonRequestTemplate.get(uri).getContent(TYPE_FACTORY.c
 InputStream is = jsonRequestTemplate.get(uri).getContentStream();
 ```
 
-`GenericType` instance **cannot be shared** across the code. The type, passed as a generic parameter, explicitly or implicitly (by inference), is captured by the instantiation of a subclass of `GenericType`.
+`fr.devlogic.util.http.GenericType` instance **cannot be shared** across the code. The type, passed as a generic
+parameter, explicitly or implicitly (by inference), is captured by the instantiation of a subclass
+of `fr.devlogic.util.http.GenericType`.
