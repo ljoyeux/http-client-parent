@@ -1,4 +1,4 @@
-package fr.devlogic.util.http.impl;
+package fr.devlogic.util.http.impl.apache;
 
 import fr.devlogic.util.http.*;
 import fr.devlogic.util.http.annotation.Nullable;
@@ -32,7 +32,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static fr.devlogic.util.http.impl.HttpUtils.getContentType;
+import static fr.devlogic.util.http.impl.apache.HttpUtils.getContentType;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 
 
@@ -42,15 +42,13 @@ import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 public final class ApacheHttpHttpResponse implements HttpResponse {
     private static final Logger LOG = LoggerFactory.getLogger(ApacheHttpHttpResponse.class);
 
-    private static final Map<MediaType, MediaTypeProcessor> PROVIDERS;
+    private static final Map<MediaType, ApacheHttpMediaTypeProcessor> PROVIDERS;
     private static final String PREDICATE_IS_MISSING = "Predicate is missing";
 
     static {
         PROVIDERS = new EnumMap<>(MediaType.class);
-        ServiceLoader<MediaTypeProcessor> load = ServiceLoader.load(MediaTypeProcessor.class);
-        load.iterator().forEachRemaining(p -> p.handledMediaTypes().forEach(m -> PROVIDERS.put(m, p)));
+        MediaTypeProcessorFatory.PROVIDERS.forEach((k, v) -> PROVIDERS.put(k, (ApacheHttpMediaTypeProcessor) (v.stream().filter(o -> ApacheHttpMediaTypeProcessor.class.isAssignableFrom(o.getClass())).findFirst()).get()));
     }
-
 
     private static final String CONTENT = "content";
     private CloseableHttpResponse closeableHttpResponse;
@@ -130,9 +128,10 @@ public final class ApacheHttpHttpResponse implements HttpResponse {
         Object content = genericRequestTemplate.content;
 
         MediaType mediaType = contentType.getMediaType();
-        MediaTypeProcessor mediaTypeProcessor = PROVIDERS.get(mediaType);
+        ApacheHttpMediaTypeProcessor mediaTypeProcessor = PROVIDERS.get(mediaType);
         if (mediaTypeProcessor != null) {
-            return mediaTypeProcessor.writeContent(content, contentType);
+            mediaTypeProcessor.writeContent(content, contentType);
+            return mediaTypeProcessor.getHttpEntity();
         }
 
         switch (mediaType) {
@@ -159,10 +158,11 @@ public final class ApacheHttpHttpResponse implements HttpResponse {
                 MediaType partMediaType = part.getContentType().getMediaType();
 
                 // comportement spécifique
-                MediaTypeProcessor partMediaTypeProcessor = PROVIDERS.get(partMediaType);
+                ApacheHttpMediaTypeProcessor partMediaTypeProcessor = PROVIDERS.get(partMediaType);
                 if (partMediaTypeProcessor != null) {
                     try {
-                        partMediaTypeProcessor.writeContent(builder, part);
+                        partMediaTypeProcessor.setMultipartEntityBuilder(builder);
+                        partMediaTypeProcessor.writeContent(part);
                         continue;
                     } catch (UnsupportedOperationException ex) {
                         //

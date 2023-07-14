@@ -1,4 +1,4 @@
-package fr.devlogic.util.http.json.impl;
+package fr.devlogic.util.http.impl.apache;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;

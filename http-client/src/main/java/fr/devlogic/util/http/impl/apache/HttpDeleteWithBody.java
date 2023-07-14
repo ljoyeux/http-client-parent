@@ -1,4 +1,4 @@
-package fr.devlogic.util.http.impl;
+package fr.devlogic.util.http.impl.apache;
 
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 

@@ -1,10 +1,8 @@
-package fr.devlogic.util.http.impl;
+package fr.devlogic.util.http.impl.apache;
 
 import fr.devlogic.util.http.MediaType;
-import fr.devlogic.util.http.MediaTypeProcessor;
-import fr.devlogic.util.http.part.Part;
 import fr.devlogic.util.http.exception.IORuntimeException;
-import org.apache.http.HttpEntity;
+import fr.devlogic.util.http.part.Part;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -21,7 +19,7 @@ import java.util.Set;
 import static fr.devlogic.util.http.MediaType.TEXT_HTML;
 import static fr.devlogic.util.http.MediaType.TEXT_PLAIN;
 
-public class TextHandler implements MediaTypeProcessor {
+public class TextHandler extends ApacheHttpMediaTypeProcessor {
     @Override
     public Set<MediaType> handledMediaTypes() {
         return EnumSet.of(TEXT_PLAIN, TEXT_HTML);
@@ -49,7 +47,7 @@ public class TextHandler implements MediaTypeProcessor {
     }
 
     @Override
-    public HttpEntity writeContent(Object content, fr.devlogic.util.http.ContentType contentType) {
+    public void writeContent(Object content, fr.devlogic.util.http.ContentType contentType) {
         BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
 
         if (content != null) {
@@ -65,12 +63,12 @@ public class TextHandler implements MediaTypeProcessor {
         }
 
         basicHttpEntity.setContentType(contentType.toString());
-
-        return basicHttpEntity;
+        setHttpEntity(basicHttpEntity);
     }
 
     @Override
-    public void writeContent(MultipartEntityBuilder multipartEntityBuilder, Part part) {
+    public void writeContent(Part part) {
+        MultipartEntityBuilder multipartEntityBuilder = getMultipartEntityBuilder();
         Object content = part.getContent();
         ContentType contentType = HttpUtils.convertInternalContentType(part.getContentType());
 

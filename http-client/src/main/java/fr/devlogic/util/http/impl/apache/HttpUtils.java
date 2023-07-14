@@ -1,4 +1,4 @@
-package fr.devlogic.util.http.impl;
+package fr.devlogic.util.http.impl.apache;
 
 import fr.devlogic.util.http.ContentType;
 import fr.devlogic.util.http.MediaType;

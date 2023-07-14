@@ -1,20 +1,20 @@
-package fr.devlogic.util.http.json.impl;
+package fr.devlogic.util.http.impl.apache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
-import fr.devlogic.util.http.impl.HttpUtils;
 import fr.devlogic.util.http.MediaType;
-import fr.devlogic.util.http.MediaTypeProcessor;
-import fr.devlogic.util.http.part.Part;
 import fr.devlogic.util.http.exception.HttpRuntimeException;
 import fr.devlogic.util.http.exception.IORuntimeException;
-import org.apache.http.HttpEntity;
+import fr.devlogic.util.http.part.Part;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.EnumSet;
@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Implémentation de la lecture et l'écriture au format json {@link MediaType#APPLICATION_JSON}
  */
-public class JsonHandler implements MediaTypeProcessor {
+public class JsonHandler extends ApacheHttpMediaTypeProcessor {
     @Override
     public Set<MediaType> handledMediaTypes() {
         return EnumSet.of(MediaType.APPLICATION_JSON);
@@ -77,7 +77,7 @@ public class JsonHandler implements MediaTypeProcessor {
     }
 
     @Override
-    public HttpEntity writeContent(Object content, fr.devlogic.util.http.ContentType contentType) {
+    public void writeContent(Object content, fr.devlogic.util.http.ContentType contentType) {
         ContentType httpContentType = HttpUtils.convertInternalContentType(contentType);
 
         BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
@@ -95,12 +95,12 @@ public class JsonHandler implements MediaTypeProcessor {
         }
 
         basicHttpEntity.setContentType(httpContentType.toString());
-
-        return basicHttpEntity;
+        setHttpEntity(basicHttpEntity);
     }
 
     @Override
-    public void writeContent(MultipartEntityBuilder multipartEntityBuilder, Part part) {
+    public void writeContent(Part part) {
+        MultipartEntityBuilder multipartEntityBuilder = getMultipartEntityBuilder();
         Object content = part.getContent();
         ContentType contentType = HttpUtils.convertInternalContentType(part.getContentType());
 

@@ -1,7 +1,7 @@
 package fr.devlogic.util.http;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fr.devlogic.util.http.json.impl.JsonHandler;
+import fr.devlogic.util.http.impl.apache.JsonHandler;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.util.EntityUtils;
@@ -81,12 +81,14 @@ public class JsonHttpRequestTemplateConfigurationServerTest {
         Model model = new Model();
         model.setAccents(ACCENTS);
 
-        HttpEntity httpEntity = jsonHandler.writeContent(model, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.ISO_8859_1));
+        jsonHandler.writeContent(model, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.ISO_8859_1));
+        HttpEntity httpEntity = jsonHandler.getHttpEntity();
         byte[] bytesISO8859 = EntityUtils.toByteArray(httpEntity);
         Assertions.assertTrue(find(ACCENTS_ISO_8859_1, bytesISO8859));
         Assertions.assertFalse(find(ACCENTS_UTF8, bytesISO8859));
 
-        httpEntity = jsonHandler.writeContent(model, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
+        jsonHandler.writeContent(model, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
+        httpEntity = jsonHandler.getHttpEntity();
         byte[] bytesUTF8 = EntityUtils.toByteArray(httpEntity);
         Assertions.assertFalse(find(ACCENTS_ISO_8859_1, bytesUTF8));
         Assertions.assertTrue(find(ACCENTS_UTF8, bytesUTF8));

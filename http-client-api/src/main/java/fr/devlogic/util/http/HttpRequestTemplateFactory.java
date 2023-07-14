@@ -18,7 +18,6 @@ public final class HttpRequestTemplateFactory {
                 .map(Object::getClass)
                 .map(c -> (Class<HttpRequestTemplate>) c)
                 .collect(Collectors.toList());
-
     }
 
     public HttpRequestTemplate getObject() {

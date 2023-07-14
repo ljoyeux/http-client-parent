@@ -1,7 +1,8 @@
-package fr.devlogic.util.http;
+package fr.devlogic.util.http.impl.apache;
 
-import fr.devlogic.util.http.impl.HttpUtils;
-import fr.devlogic.util.http.impl.TextHandler;
+import fr.devlogic.util.http.Commons;
+import fr.devlogic.util.http.ContentType;
+import fr.devlogic.util.http.MediaType;
 import fr.devlogic.util.http.part.Part;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -46,10 +47,12 @@ public class EncodingTest {
     @Test
     public void writeContent() throws IOException {
         TextHandler textHandler = new TextHandler();
-        HttpEntity httpEntity = textHandler.writeContent(ACCENTS, new ContentType(MediaType.TEXT_PLAIN, StandardCharsets.ISO_8859_1));
+        textHandler.writeContent(ACCENTS, new ContentType(MediaType.TEXT_PLAIN, StandardCharsets.ISO_8859_1));
+        HttpEntity httpEntity = textHandler.getHttpEntity();
         Assertions.assertArrayEquals(ACCENTS_ISO_8859_1, EntityUtils.toByteArray(httpEntity));
 
-        httpEntity = textHandler.writeContent(ACCENTS, new ContentType(MediaType.TEXT_PLAIN, StandardCharsets.UTF_8));
+        textHandler.writeContent(ACCENTS, new ContentType(MediaType.TEXT_PLAIN, StandardCharsets.UTF_8));
+        httpEntity = textHandler.getHttpEntity();
         byte[] bytes = EntityUtils.toByteArray(httpEntity);
         Assertions.assertArrayEquals(ACCENTS_UTF8, bytes);
         System.out.println(new String(bytes));
@@ -58,7 +61,8 @@ public class EncodingTest {
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
         Part part = new Part("json", ACCENTS, new ContentType(MediaType.TEXT_PLAIN, StandardCharsets.ISO_8859_1));
-        textHandler.writeContent(multipartEntityBuilder, part);
+        textHandler.setMultipartEntityBuilder(multipartEntityBuilder);
+        textHandler.writeContent(part);
         HttpEntity multipartEntity = multipartEntityBuilder.build();
         bytes = EntityUtils.toByteArray(multipartEntity);
         Assertions.assertTrue(Commons.find(ACCENTS_ISO_8859_1, bytes));

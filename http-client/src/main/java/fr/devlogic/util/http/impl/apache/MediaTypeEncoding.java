@@ -1,4 +1,4 @@
-package fr.devlogic.util.http.impl;
+package fr.devlogic.util.http.impl.apache;
 
 import fr.devlogic.util.http.MediaType;
 import fr.devlogic.util.http.exception.HttpRuntimeException;

@@ -1,11 +1,7 @@
 package fr.devlogic.util.http;
 
-import fr.devlogic.util.http.ContentType;
-import fr.devlogic.util.http.HttpRequestTemplate;
-import fr.devlogic.util.http.HttpRequestTemplateFactory;
-import fr.devlogic.util.http.impl.ApacheHttpRequestTemplate;
-import fr.devlogic.util.http.impl.HttpUtils;
-import fr.devlogic.util.http.MediaType;
+import fr.devlogic.util.http.impl.apache.ApacheHttpRequestTemplate;
+import fr.devlogic.util.http.impl.apache.HttpUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

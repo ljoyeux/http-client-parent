@@ -1,6 +1,6 @@
 package fr.devlogic.util.http;
 
-import fr.devlogic.util.http.json.impl.JsonHandler;
+import fr.devlogic.util.http.impl.apache.JsonHandler;
 import fr.devlogic.util.http.part.Part;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -16,14 +16,16 @@ public class JsonTest {
     @Test
     public void writeContent() throws IOException {
         JsonHandler jsonHandler = new JsonHandler();
-        HttpEntity httpEntity = jsonHandler.writeContent(Commons.ACCENTS, new ContentType(MediaType.TEXT_PLAIN, StandardCharsets.ISO_8859_1));
+        jsonHandler.writeContent(Commons.ACCENTS, new ContentType(MediaType.TEXT_PLAIN, StandardCharsets.ISO_8859_1));
+        HttpEntity httpEntity = jsonHandler.getHttpEntity();
         byte[] bytes = EntityUtils.toByteArray(httpEntity);
         System.out.println(Commons.dump(bytes));
         Assertions.assertArrayEquals(Commons.ACCENTS_ISO_8859_1, Commons.subArray(bytes, 1, bytes.length - 1));
         Assertions.assertEquals('"', bytes[0]);
         Assertions.assertEquals('"', bytes[bytes.length - 1]);
 
-        httpEntity = jsonHandler.writeContent(Commons.ACCENTS, new ContentType(MediaType.TEXT_PLAIN, StandardCharsets.UTF_8));
+        jsonHandler.writeContent(Commons.ACCENTS, new ContentType(MediaType.TEXT_PLAIN, StandardCharsets.UTF_8));
+        httpEntity = jsonHandler.getHttpEntity();
         bytes = EntityUtils.toByteArray(httpEntity);
         Assertions.assertArrayEquals(Commons.ACCENTS_UTF8, Commons.subArray(bytes, 1, bytes.length - 1));
         Assertions.assertEquals('"', bytes[0]);
@@ -37,12 +39,14 @@ public class JsonTest {
         Commons.Model model = new Commons.Model();
         model.setAccents(Commons.ACCENTS);
 
-        HttpEntity httpEntity = jsonHandler.writeContent(model, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.ISO_8859_1));
+        jsonHandler.writeContent(model, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.ISO_8859_1));
+        HttpEntity httpEntity = jsonHandler.getHttpEntity();
         byte[] bytes = EntityUtils.toByteArray(httpEntity);
         Assertions.assertTrue(Commons.find(Commons.ACCENTS_ISO_8859_1, bytes));
         Assertions.assertFalse(Commons.find(Commons.ACCENTS_UTF8, bytes));
 
-        httpEntity = jsonHandler.writeContent(model, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
+        jsonHandler.writeContent(model, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
+        httpEntity = jsonHandler.getHttpEntity();
         bytes = EntityUtils.toByteArray(httpEntity);
         Assertions.assertFalse(Commons.find(Commons.ACCENTS_ISO_8859_1, bytes));
         Assertions.assertTrue(Commons.find(Commons.ACCENTS_UTF8, bytes));
@@ -54,7 +58,8 @@ public class JsonTest {
 
         Part part = new Part("json", Commons.ACCENTS, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.ISO_8859_1));
         JsonHandler jsonHandler = new JsonHandler();
-        jsonHandler.writeContent(multipartEntityBuilder, part);
+        jsonHandler.setMultipartEntityBuilder(multipartEntityBuilder);
+        jsonHandler.writeContent(part);
 
         HttpEntity entity = multipartEntityBuilder.build();
         byte[] bytes = EntityUtils.toByteArray(entity);
@@ -68,7 +73,8 @@ public class JsonTest {
 
         Part part = new Part("json", Commons.ACCENTS, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
         JsonHandler jsonHandler = new JsonHandler();
-        jsonHandler.writeContent(multipartEntityBuilder, part);
+        jsonHandler.setMultipartEntityBuilder(multipartEntityBuilder);
+        jsonHandler.writeContent(part);
 
         HttpEntity entity = multipartEntityBuilder.build();
         byte[] bytes = EntityUtils.toByteArray(entity);
@@ -84,7 +90,8 @@ public class JsonTest {
 
         Part part = new Part("json", model, new ContentType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
         JsonHandler jsonHandler = new JsonHandler();
-        jsonHandler.writeContent(multipartEntityBuilder, part);
+        jsonHandler.setMultipartEntityBuilder(multipartEntityBuilder);
+        jsonHandler.writeContent(part);
 
         HttpEntity entity = multipartEntityBuilder.build();
         byte[] bytes = EntityUtils.toByteArray(entity);
