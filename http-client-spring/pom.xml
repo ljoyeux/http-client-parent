@@ -9,7 +9,7 @@
         <version>2.3.0.RELEASE</version>
     </parent>
     <properties>
-        <http.client.version>0.5.0-SNAPSHOT</http.client.version>
+        <http.client.version>0.6.0-SNAPSHOT</http.client.version>
     </properties>
 
     <groupId>fr.devlogic.util.http</groupId>
